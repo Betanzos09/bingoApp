@@ -1,1 +1,19 @@
-<p>bombo works!</p>
+<section class="bombo">
+    <div class="bombo-options">
+        <div class="bombo-options-ball">
+            <span class="bombo-options-ball-text">{{lastBall}}</span>
+        </div>
+        <div class="bombo-options-buttons">
+            <button class="bombo-options-buttons-button" (click)="nextBall()">Next</button>
+        </div>
+    </div>
+    <div class="bombo-screen">
+        <div class="bombo-screen-content">
+            <div class="bombo-screen-content-numbers">
+                <div class="bombo-screen-content-numbers-number" *ngFor="let number of numbers; let i = index" >
+                    <span class="bombo-screen-content-numbers-number-text" [class.called]="numbersCalled[i]">{{number}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

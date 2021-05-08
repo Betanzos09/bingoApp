@@ -1,9 +1,14 @@
 :root {
+    --color-red: #e62f2f;
+    --color-blue: #2f60e6;
     --color-pink: #DF5679;
     --color-pink-light: #E5C3CC;
     --color-white: #FFFFFF;
+    --color-black: #0c0b0b;
 }
 
 body {
     margin: 0;
+    user-select: none;
+    touch-action: manipulation;
 }
