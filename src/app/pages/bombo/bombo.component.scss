@@ -119,6 +119,17 @@
     }
 }
 
+@media screen and (orientation:landscape) {
+    .bombo { 
+        &-options {
+            height: calc(30% - 1rem);
+        }
+        &-screen {
+            height: 70%;
+        }
+    }
+}
+
 @keyframes spin {
     from {
         transform:rotate(0deg);
