@@ -10,6 +10,8 @@ export class CartonComponent implements OnInit {
 
   public lotoNumbers: Array<Number>;
   public lotoNumbersCalled: Array<Boolean>;
+  public arrayColors: Array<String>;
+  public selectedColor: number;
 
   constructor() {
     this.lotoNumbers = new Array<Number>();
@@ -24,6 +26,8 @@ export class CartonComponent implements OnInit {
       this.lotoNumbersCalled.push(false);     
     }
     this.lotoNumbers.sort(this.sortNumber);
+    this.initializeArrayColors();
+    this.selectedColor = this.randomIntFromInterval(0,3);
   }
 
   ngOnInit(): void {
@@ -39,5 +43,13 @@ export class CartonComponent implements OnInit {
   }
 
   private sortNumber ( a, b ){ return a - b; }
+
+  private initializeArrayColors() {
+    this.arrayColors = new Array<String>();
+    this.arrayColors.push('pink');
+    this.arrayColors.push('green');
+    this.arrayColors.push('blue');
+    this.arrayColors.push('orange');
+  }
 
 }

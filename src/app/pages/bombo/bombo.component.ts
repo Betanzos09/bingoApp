@@ -10,6 +10,7 @@ export class BomboComponent implements OnInit {
   public numbers: Array<Number>;
   public numbersCalled: Array<Boolean>;
   public lastBall: Number = 0;
+  public shake: boolean = true;
 
 
   constructor() { 
@@ -29,6 +30,7 @@ export class BomboComponent implements OnInit {
       this.numbersCalled[number] = true;
       this.lastBall = number +1;
     }
+    this.shake = false;
   }
   
   private randomIntFromInterval(min: number, max: number) { 

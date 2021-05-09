@@ -1,0 +1,31 @@
+.header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: calc(100% - 1rem);
+    height: 2rem;
+    padding: .5rem;
+    &-link {
+        width: 1.5rem;
+        height: 1.5rem;
+        &-figure, &-figure-img  {
+            margin: 0;
+            width: 100%;
+            height: auto;
+        }
+    }
+    &-title {
+        margin: auto .5rem;
+        &-text {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+        }
+    }
+}
+/* 
+.header-top-link-figure, .header-top-link-figure-img  {
+    margin: 0;
+    width: 100%;
+    height: auto;
+} */

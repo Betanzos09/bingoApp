@@ -4,7 +4,8 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 3rem);
+
     &-options {
         display: flex;
         justify-content: space-between;
@@ -34,10 +35,42 @@
                 font-weight: 600;
             }
         }
+        &-bombo {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 5rem;
+            height: 5rem;
+            &-figure, &-figure-image  {
+                position: absolute;
+                top: 0;
+                margin: 0;
+                width: 100%;
+                height: auto;
+                &.pie {
+                    z-index: 1;
+                }
+                &.bombo {
+                    animation: spin 2s infinite linear;
+                }
+                &.ruleta {
+                    animation: spin .75s infinite linear;
+                }
+            }
+            
+        }
         &-buttons {
             &-button {
-                width: 6rem;
+                width: 8rem;
                 height: 3rem;
+                border-radius: .25rem;
+                font-size: 1.25rem;
+                outline: none;
+                border: none;
+                background: var(--color-blue-light);
+                box-shadow: 2px 2px 4px rgba(10, 10, 10, 0.7);
+                font-family: 'Open Sans', sans-serif;
             }
         }
     }
@@ -83,5 +116,16 @@
                 }
             }
         }
+    }
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+        transform-origin: center center;
+    }
+    to {
+        transform:rotate(360deg);
+        transform-origin: center center;
     }
 }

@@ -1,10 +1,19 @@
+<app-header></app-header>
 <section class="bombo">
     <div class="bombo-options">
-        <div class="bombo-options-ball">
+        <div class="bombo-options-ball" *ngIf="!shake">
             <span class="bombo-options-ball-text">{{lastBall}}</span>
         </div>
+        <div class="bombo-options-bombo" *ngIf="shake">
+            <figure class="bombo-options-bombo-figure">
+                <img class="bombo-options-bombo-figure-image pie" src="./assets/images/bombo1.svg" alt="bombo1">
+                <img class="bombo-options-bombo-figure-image bombo" src="./assets/images/bombo2.svg" alt="bombo2">
+                <img class="bombo-options-bombo-figure-image ruleta" src="./assets/images/bombo3.svg" alt="bombo3">
+            </figure>
+        </div>
         <div class="bombo-options-buttons">
-            <button class="bombo-options-buttons-button" (click)="nextBall()">Next</button>
+            <button class="bombo-options-buttons-button" (click)="shake=true" *ngIf="!shake">Agitar</button>
+            <button class="bombo-options-buttons-button" (click)="nextBall()" *ngIf="shake">Parar</button>
         </div>
     </div>
     <div class="bombo-screen">
