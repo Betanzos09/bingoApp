@@ -4,6 +4,7 @@
     align-items: center;
     width: 100%;
     height: calc(100% - 3rem);
+    margin: auto;
     overflow: scroll;
     &-content {
         width: calc(100% - 1rem);
@@ -106,10 +107,13 @@
 }
 
 @media screen and (orientation:landscape) {
-    .carton-content { 
-        height: 18rem;
-        &-body {
-            width: 490px;
+    .carton {
+        max-width: 600px;
+        &-content { 
+            height: 18rem;
+            &-body {
+                width: 490px;
+            }
         }
     }
 }

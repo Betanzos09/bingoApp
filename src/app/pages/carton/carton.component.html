@@ -5,7 +5,7 @@
             <span class="carton-content-title-text">LOTTO BOLA</span>
         </div>
         <div class="carton-content-body">
-            <div class="carton-content-body-numbers" >
+            <div class="carton-content-body-numbers">
                 <div class="carton-content-body-numbers-number" [ngClass]="arrayColors[selectedColor]" *ngFor="let number of lotoNumbers; let i = index" (click)="callNumber(i)">
                     <span class="carton-content-body-numbers-number-little topLeft">{{ number }}</span>
                     <span class="carton-content-body-numbers-number-little topRight">{{ number }}</span>
