@@ -62,8 +62,8 @@
         }
         &-buttons {
             &-button {
-                width: 8rem;
-                height: 3rem;
+                width: min(8rem, 42vw);
+                min-height: 3rem;
                 border-radius: .25rem;
                 font-size: 1.25rem;
                 outline: none;
@@ -71,6 +71,13 @@
                 background: var(--color-blue-light);
                 box-shadow: 2px 2px 4px rgba(10, 10, 10, 0.7);
                 font-family: 'Open Sans', sans-serif;
+                padding: .5rem .75rem;
+                font-weight: 600;
+                touch-action: manipulation;
+                &:disabled {
+                    opacity: .6;
+                    cursor: not-allowed;
+                }
             }
         }
     }
@@ -92,6 +99,8 @@
                 height: 100%;
                 max-width: 890px;
                 margin: auto;
+                padding: 0;
+                list-style: none;
                 &-number {
                     display: flex;
                     justify-content: center;
@@ -121,6 +130,27 @@
     }
 }
 
+@media screen and (max-width: 430px) {
+    .bombo {
+        &-options {
+            gap: .5rem;
+            &-ball, &-bombo {
+                width: 4rem;
+                height: 4rem;
+            }
+            &-ball-text {
+                width: 3.25rem;
+                height: 3.25rem;
+                font-size: 1.35rem;
+            }
+            &-buttons-button {
+                font-size: 1rem;
+                min-height: 2.75rem;
+            }
+        }
+    }
+}
+
 @media screen and (orientation:landscape) {
     .bombo { 
         &-options {
@@ -129,6 +159,12 @@
         &-screen {
             height: 70%;
         }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bombo-options-bombo-figure-image {
+        animation: none !important;
     }
 }
 
