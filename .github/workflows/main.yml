@@ -37,10 +37,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build production app
-        run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/"
+        run: npm run build -- --configuration production
 
       - name: Prepare SPA fallback
         run: cp dist/bingoApp/index.html dist/bingoApp/404.html
