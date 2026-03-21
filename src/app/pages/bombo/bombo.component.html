@@ -1,28 +1,28 @@
 <app-header></app-header>
-<section class="bombo">
+<section class="bombo" aria-label="Panel del bombo">
     <div class="bombo-options">
-        <div class="bombo-options-ball" *ngIf="!shake">
+        <div class="bombo-options-ball" *ngIf="!shake" aria-live="polite" aria-atomic="true">
             <span class="bombo-options-ball-text">{{lastBall}}</span>
         </div>
         <div class="bombo-options-bombo" *ngIf="shake">
             <figure class="bombo-options-bombo-figure">
-                <img class="bombo-options-bombo-figure-image pie" src="./assets/images/bombo1.svg" alt="bombo1">
-                <img class="bombo-options-bombo-figure-image bombo" src="./assets/images/bombo2.svg" alt="bombo2">
-                <img class="bombo-options-bombo-figure-image ruleta" src="./assets/images/bombo3.svg" alt="bombo3">
+                <img class="bombo-options-bombo-figure-image pie" src="./assets/images/bombo1.svg" alt="" aria-hidden="true">
+                <img class="bombo-options-bombo-figure-image bombo" src="./assets/images/bombo2.svg" alt="" aria-hidden="true">
+                <img class="bombo-options-bombo-figure-image ruleta" src="./assets/images/bombo3.svg" alt="" aria-hidden="true">
             </figure>
         </div>
         <div class="bombo-options-buttons">
-            <button class="bombo-options-buttons-button" (click)="shake=true" *ngIf="!shake">Agitar</button>
-            <button class="bombo-options-buttons-button" (click)="nextBall()" *ngIf="shake">Parar</button>
+            <button class="bombo-options-buttons-button" type="button" (click)="shake=true" *ngIf="!shake">Agitar</button>
+            <button class="bombo-options-buttons-button" type="button" (click)="nextBall()" *ngIf="shake" [disabled]="!numbersCalled.includes(false)" [attr.aria-label]="!numbersCalled.includes(false) ? 'No quedan bolas por cantar' : 'Parar bombo y cantar siguiente número'">Parar</button>
         </div>
     </div>
-    <div class="bombo-screen">
+    <div class="bombo-screen" role="region" aria-label="Números del 1 al 50">
         <div class="bombo-screen-content">
-            <div class="bombo-screen-content-numbers">
-                <div class="bombo-screen-content-numbers-number" *ngFor="let number of numbers; let i = index" >
-                    <span class="bombo-screen-content-numbers-number-text" [class.called]="numbersCalled[i]">{{number}}</span>
-                </div>
-            </div>
+            <ul class="bombo-screen-content-numbers" role="list">
+                <li class="bombo-screen-content-numbers-number" *ngFor="let number of numbers; let i = index" >
+                    <span class="bombo-screen-content-numbers-number-text" [class.called]="numbersCalled[i]" [attr.aria-label]="'Número ' + number + (numbersCalled[i] ? ' cantado' : ', pendiente')">{{number}}</span>
+                </li>
+            </ul>
         </div>
     </div>
 </section>

@@ -5,10 +5,10 @@
     width: 100%;
     height: calc(100% - 3rem);
     margin: auto;
-    overflow: scroll;
+    overflow: auto;
     &-content {
         width: calc(100% - 1rem);
-        height: calc(100% - 1rem);
+        min-height: calc(100% - 1rem);
         margin: .5rem;
         border-top: 2px solid var(--color-white);
         border-radius: .125rem;
@@ -30,15 +30,17 @@
             height: 2rem;
             padding: .5rem;
             &-text {
+                margin: 0;
                 font-family: 'Open Sans', sans-serif;
                 font-size: 2rem;
+                line-height: 1;
             }
         }
         &-body {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 268px;
+            width: min(268px, 100%);
             margin: auto;
             padding: .5rem;
             &-numbers {
@@ -55,6 +57,9 @@
                     width: 6rem;
                     height: 6rem;
                     border: 1px solid var(--color-white);
+                    padding: 0;
+                    margin: 0;
+                    touch-action: manipulation;
                     &.blue {
                         background-color: var(--color-blue-light);
                     }
@@ -68,6 +73,9 @@
                         background-color: var(--color-orange-light);
                     }
                     &-normal {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         width: 4rem;
                         height: 4rem;
                         border-radius: 100%;
@@ -101,6 +109,26 @@
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .carton {
+        &-content-title-text {
+            font-size: 1.65rem;
+        }
+        &-content-body-numbers-number {
+            width: 4.65rem;
+            height: 4.65rem;
+            &-normal {
+                width: 3.1rem;
+                height: 3.1rem;
+                font-size: 2.3rem;
+            }
+            &-little {
+                font-size: .8rem;
             }
         }
     }
