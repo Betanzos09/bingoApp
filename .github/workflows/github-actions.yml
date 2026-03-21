@@ -49,8 +49,8 @@ jobs:
           path: dist/bingoApp
 
   deploy:
-    # Restrict deployment to main so environment protection rules don't reject master/work runs.
-    if: github.ref == 'refs/heads/main'
+    # Deploy only from default branches accepted by environment protection rules.
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:
