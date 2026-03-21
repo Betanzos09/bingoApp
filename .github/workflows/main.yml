@@ -50,17 +50,17 @@ jobs:
             --dereference \
             --hard-dereference \
             --directory dist/bingoApp \
-            -cvf "$RUNNER_TEMP/artifact.tar" \
+            -cf - \
             --exclude=.git \
             --exclude=.github \
             --exclude=".[^/]*" \
-            .
+            . | gzip > "$RUNNER_TEMP/artifact.tar.gz"
 
       - name: Upload Pages artifact
         uses: actions/upload-artifact@v6
         with:
           name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
+          path: ${{ runner.temp }}/artifact.tar.gz
           retention-days: 1
           if-no-files-found: error
 
