@@ -44,10 +44,25 @@ jobs:
       - name: Prepare SPA fallback
         run: cp dist/bingoApp/index.html dist/bingoApp/404.html
 
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v4
+      - name: Archive Pages artifact
+        run: |
+          tar \
+            --dereference \
+            --hard-dereference \
+            --directory dist/bingoApp \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=".[^/]*" \
+            .
+
+      - name: Upload Pages artifact
+        uses: actions/upload-artifact@v6
         with:
-          path: dist/bingoApp
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
   deploy:
     if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
