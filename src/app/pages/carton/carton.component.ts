@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { element } from 'protractor';
 
 @Component({
   selector: 'app-carton',
@@ -35,7 +34,6 @@ export class CartonComponent implements OnInit {
 
   public callNumber(i: number) {
     this.lotoNumbersCalled[i] = !this.lotoNumbersCalled[i];
-    console.log("call")
   }
 
   private randomIntFromInterval(min: number, max: number) { 

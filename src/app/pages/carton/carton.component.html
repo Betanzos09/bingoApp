@@ -1,18 +1,26 @@
 <app-header></app-header>
 <section class="carton">
-    <div class="carton-content" [ngClass]="arrayColors[selectedColor]">
+    <div class="carton-content" [ngClass]="arrayColors[selectedColor]" role="region" aria-labelledby="carton-title" aria-describedby="carton-help">
         <div class="carton-content-title">
-            <span class="carton-content-title-text">LOTTO BOLA</span>
+            <h1 class="carton-content-title-text" id="carton-title">LOTTO BOLA</h1>
         </div>
+        <p class="sr-only" id="carton-help">Pulsa sobre cada número para marcarlo o desmarcarlo en tu cartón.</p>
         <div class="carton-content-body">
             <div class="carton-content-body-numbers">
-                <div class="carton-content-body-numbers-number" [ngClass]="arrayColors[selectedColor]" *ngFor="let number of lotoNumbers; let i = index" (click)="callNumber(i)">
+                <button
+                    class="carton-content-body-numbers-number"
+                    [ngClass]="arrayColors[selectedColor]"
+                    *ngFor="let number of lotoNumbers; let i = index"
+                    type="button"
+                    [attr.aria-pressed]="lotoNumbersCalled[i]"
+                    [attr.aria-label]="'Número ' + number + (lotoNumbersCalled[i] ? ', marcado' : ', sin marcar')"
+                    (click)="callNumber(i)">
                     <span class="carton-content-body-numbers-number-little topLeft">{{ number }}</span>
                     <span class="carton-content-body-numbers-number-little topRight">{{ number }}</span>
                     <span class="carton-content-body-numbers-number-little bottomLeft">{{ number }}</span>
                     <span class="carton-content-body-numbers-number-little bottomRight">{{ number }}</span>
                     <span class="carton-content-body-numbers-number-normal" [class.called]="lotoNumbersCalled[i]">{{ number }}</span>
-                </div>
+                </button>
             </div>
         </div>
     </div>

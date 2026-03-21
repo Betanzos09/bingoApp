@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { element } from 'protractor';
 import { Subscription, fromEvent } from 'rxjs';
 
 @Component({
@@ -25,9 +24,7 @@ export class BomboComponent implements OnInit, OnDestroy {
     this.subscriptor =  fromEvent(window, 'resize')
         .subscribe(res => {
           let numbersClass = document.querySelector<HTMLElement>(".bombo-screen-content-numbers");
-          let heightNumber = numbersClass.offsetHeight;
-          let widthNumber = numbersClass.offsetWidth;
-          if(widthNumber < 890) {
+          if(numbersClass && numbersClass.offsetWidth < 890) {
             this.resize();
           }
         });
@@ -37,7 +34,9 @@ export class BomboComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy():void {
-    this.subscriptor.unsubscribe();
+    if (this.subscriptor) {
+      this.subscriptor.unsubscribe();
+    }
   }
 
   public nextBall() {
@@ -58,6 +57,9 @@ export class BomboComponent implements OnInit, OnDestroy {
 
   private resize() {
     let numbersClass = document.querySelector<HTMLElement>(".bombo-screen-content-numbers");
+    if (!numbersClass) {
+      return;
+    }
     let heightNumber = numbersClass.offsetHeight;
     let widthNumber = numbersClass.offsetWidth;
     let value = Math.trunc(Math.sqrt((heightNumber * widthNumber)/50)) - 12;

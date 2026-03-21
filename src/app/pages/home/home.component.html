@@ -1,15 +1,15 @@
-<section class="home">
+<section class="home" aria-labelledby="home-title">
     <div class="home-title">
-        <h1 class="home-title-h1">
+        <h1 class="home-title-h1" id="home-title">
             BINGO
         </h1>
     </div>
-    <div class="home-content">
-        <button class="home-content-button" (click)="navigateBombo()">Nuevo Bombo</button>
-        <button class="home-content-button" (click)="navigateCarton()">Nuevo Cartón</button>
+    <div class="home-content" role="group" aria-label="Opciones del juego">
+        <button class="home-content-button" type="button" (click)="navigateBombo()" aria-label="Crear un nuevo bombo para sacar bolas">Nuevo Bombo</button>
+        <button class="home-content-button" type="button" (click)="navigateCarton()" aria-label="Crear un nuevo cartón de juego">Nuevo Cartón</button>
         <div class="home-content-background">
             <figure class="home-content-background-figure">
-                <img class="home-content-background-figure-img" src="./assets/images/bombo.svg" width="320" height="320" alt="Volver">
+                <img class="home-content-background-figure-img" src="./assets/images/bombo.svg" width="320" height="320" alt="" aria-hidden="true">
             </figure>
         </div>
     </div>
