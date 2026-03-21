@@ -21,6 +21,7 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NODE_OPTIONS: --openssl-legacy-provider
 
 jobs:
   build:
@@ -29,14 +30,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup Node.js 14
+      - name: Setup Node.js 24
         uses: actions/setup-node@v6
         with:
-          node-version: 14
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build production app
         run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/"
