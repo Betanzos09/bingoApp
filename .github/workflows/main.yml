@@ -1,0 +1,78 @@
+name: Angular CI + Pages Deploy
+
+on:
+  push:
+    branches:
+      - work
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NODE_OPTIONS: --openssl-legacy-provider
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build production app
+        run: npm run build -- --configuration production
+
+      - name: Prepare SPA fallback
+        run: cp dist/bingoApp/index.html dist/bingoApp/404.html
+
+      - name: Archive Pages artifact
+        run: |
+          tar \
+            --dereference \
+            --hard-dereference \
+            --directory dist/bingoApp \
+            -cf - \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=".[^/]*" \
+            . | gzip > "$RUNNER_TEMP/artifact.tar.gz"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  deploy:
+    if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

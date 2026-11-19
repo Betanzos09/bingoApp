@@ -1,9 +1,11 @@
 .home {
     position: relative;
     width: calc(100% - 1.5rem);
-    height: calc(100% - 1.5rem);
+    min-height: calc(100% - 1.5rem);
     margin: .5rem;
     border: .25rem solid var(--color-blue);
+    border-radius: .5rem;
+    background: rgba(255, 255, 255, 0.85);
     &-title {
         display: flex;
         justify-content: center;
@@ -27,8 +29,8 @@
         height: calc(100% - 5rem);
         overflow: hidden;
         &-button {
-            width: 12rem;
-            height: 3rem;
+            width: min(15rem, 86vw);
+            min-height: 3rem;
             margin: 1rem 0;
             border-radius: .25rem;
             font-size: 1.25rem;
@@ -37,7 +39,14 @@
             background: var(--color-blue-light);
             font-family: 'Open Sans', sans-serif;
             box-shadow: 2px 2px 4px rgba(10, 10, 10, 0.7);
+            padding: .5rem 1rem;
+            font-weight: 600;
+            transition: transform .12s ease, filter .12s ease;
             z-index: 1;
+            &:active {
+                transform: translateY(1px);
+                filter: brightness(.95);
+            }
         }
         &-background {
             display: flex;
@@ -75,6 +84,20 @@
         &.rightBottom {
             bottom: 0;
             right: 0;
+        }
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .home {
+        width: calc(100% - .75rem);
+        margin: .375rem;
+        &-title-h1 {
+            font-size: 2rem;
+        }
+        &-content-button {
+            font-size: 1.1rem;
+            margin: .75rem 0;
         }
     }
 }
