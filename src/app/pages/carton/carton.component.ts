@@ -1,55 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { element } from 'protractor';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { BingoService } from '../../shared/services/bingo.service';
 
 @Component({
   selector: 'app-carton',
+  standalone: false,
   templateUrl: './carton.component.html',
   styleUrls: ['./carton.component.scss']
 })
-export class CartonComponent implements OnInit {
-
-  public lotoNumbers: Array<Number>;
-  public lotoNumbersCalled: Array<Boolean>;
-  public arrayColors: Array<String>;
-  public selectedColor: number;
-
-  constructor() {
-    this.lotoNumbers = new Array<Number>();
-    this.lotoNumbersCalled = new Array<Boolean>();
-
-    for (let index = 0; index < 10; index++) {
-      let number = this.randomIntFromInterval(1,50);
-      while(this.lotoNumbers.includes(number)) {
-        number = this.randomIntFromInterval(1,50);
-      }
-      this.lotoNumbers.push(number) 
-      this.lotoNumbersCalled.push(false);     
-    }
-    this.lotoNumbers.sort(this.sortNumber);
-    this.initializeArrayColors();
-    this.selectedColor = this.randomIntFromInterval(0,3);
-  }
-
-  ngOnInit(): void {
-  }
-
-  public callNumber(i: number) {
-    this.lotoNumbersCalled[i] = !this.lotoNumbersCalled[i];
-    console.log("call")
-  }
-
-  private randomIntFromInterval(min: number, max: number) { 
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  private sortNumber ( a, b ){ return a - b; }
-
-  private initializeArrayColors() {
-    this.arrayColors = new Array<String>();
-    this.arrayColors.push('pink');
-    this.arrayColors.push('green');
-    this.arrayColors.push('blue');
-    this.arrayColors.push('orange');
-  }
-
+export class CartonComponent {
+  numbers: number[] = []; marked: boolean[] = []; cells: Array<{ number?: number; ball: boolean }> = [];
+  rows = 3; color = 'blue';
+  ticketNumber = 1;
+  completedRows: boolean[] = [];
+  lineMessageVisible = false;
+  lineMessage = 'LÍNEA';
+  private lineShown = false;
+  private bingoShown = false;
+  private lineTimer: any;
+  constructor(private bingo: BingoService, private changeDetector: ChangeDetectorRef) { this.newTicket(); }
+  newTicket(): void { this.ticketNumber = (Date.now() % 1000) + 1; this.rows = this.bingo.getRows(); const configuredColor = this.bingo.getColor(); const colors = ['blue', 'red', 'green', 'orange', 'pink']; this.color = configuredColor === 'random' ? colors[Math.floor(Math.random() * colors.length)] : configuredColor; this.cells = this.bingo.createTicketLayout(this.rows, this.bingo.getMaxBalls()); this.numbers = this.cells.filter(cell => !cell.ball).map(cell => cell.number); this.marked = this.numbers.map(() => false); this.completedRows = []; this.lineShown = false; this.bingoShown = false; this.lineMessageVisible = false; }
+  toggle(index: number): void { this.marked = this.marked.map((value, itemIndex) => itemIndex === index ? !value : value); }
+  toggleCell(index: number): void { if (this.cells[index].ball) return; const numberIndex = this.cells.slice(0, index + 1).filter(cell => !cell.ball).length - 1; if (numberIndex >= 0) { this.toggle(numberIndex); this.checkLines(); } }
+  isCellMarked(index: number): boolean { if (this.cells[index].ball) return false; const numberIndex = this.cells.slice(0, index + 1).filter(cell => !cell.ball).length - 1; return numberIndex >= 0 && this.marked[numberIndex]; }
+  rowForCell(index: number): number { return Math.floor(index / (this.rows === 2 ? 5 : 9)); }
+  isLineComplete(row: number): boolean { const width = this.rows === 2 ? 5 : 9; let numberIndex = 0; for (let index = 0; index < row * width; index++) if (!this.cells[index].ball) numberIndex++; const rowNumbers = this.cells.slice(row * width, row * width + width).filter(cell => !cell.ball).length; return rowNumbers > 0 && this.marked.slice(numberIndex, numberIndex + rowNumbers).every(Boolean); }
+  private checkLines(): void { const previous = this.completedRows.slice(); this.completedRows = Array.from({ length: this.rows }, (_, row) => this.isLineComplete(row)); const newLine = this.completedRows.some((complete, row) => complete && !previous[row]); const allComplete = this.completedRows.length === this.rows && this.completedRows.every(Boolean); const showBingo = allComplete && !this.bingoShown; const showLine = newLine && !this.lineShown && !allComplete; if (showBingo || showLine) { this.lineMessage = showBingo ? 'BINGO' : 'LÍNEA'; if (showBingo) this.bingoShown = true; else this.lineShown = true; this.lineMessageVisible = true; clearTimeout(this.lineTimer); this.changeDetector.detectChanges(); this.lineTimer = window.setTimeout(() => { this.lineMessageVisible = false; this.changeDetector.detectChanges(); }, 3000); } }
+  clear(): void { this.marked = this.numbers.map(() => false); this.completedRows = []; this.lineShown = false; this.bingoShown = false; this.lineMessageVisible = false; clearTimeout(this.lineTimer); }
+  get markedCount(): number { return this.marked.filter(Boolean).length; }
 }

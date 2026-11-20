@@ -1,20 +1,32 @@
-<section class="home">
-    <div class="home-title">
-        <h1 class="home-title-h1">
-            BINGO
-        </h1>
+<main class="home">
+  <header class="home__header">
+    <div class="home__brand"><span class="home__brand-mark">B</span><span>Bingo</span></div>
+  </header>
+
+  <section class="home__intro">
+    <div class="home__copy">
+      <h1>Prepara tu<br><em>cartón.</em></h1>
+      <p class="home__lead">Elige el formato y el color para empezar una partida.</p>
+      <div class="home__actions">
+        <button class="button button--primary" type="button" (click)="navigateCarton()">Crear cartón <span aria-hidden="true">→</span></button>
+        <button class="button" type="button" (click)="navigateBombo()">Nuevo sorteo</button>
+      </div>
     </div>
-    <div class="home-content">
-        <button class="home-content-button" (click)="navigateBombo()">Nuevo Bombo</button>
-        <button class="home-content-button" (click)="navigateCarton()">Nuevo Cartón</button>
-        <div class="home-content-background">
-            <figure class="home-content-background-figure">
-                <img class="home-content-background-figure-img" src="./assets/images/bombo.svg" width="320" height="320" alt="Volver">
-            </figure>
+
+    <div class="ticket-preview" [class]="'ticket-preview ticket-preview--' + previewColor" aria-label="Previsualización del cartón">
+      <div class="ticket-preview__label">CARTÓN N.º 0175</div>
+      <div class="ticket-preview__grid" [class.ticket-preview__grid--two]="selectedRows === 2">
+        <div class="ticket-preview__cell" *ngFor="let cell of previewCells" [class.ticket-preview__cell--ball]="cell.ball">
+          <span *ngIf="cell.ball" aria-hidden="true">◉</span><strong *ngIf="!cell.ball">{{ cell.number }}</strong>
         </div>
+      </div>
     </div>
-    <div class="home-box leftTop"></div>
-    <div class="home-box rightTop"></div>
-    <div class="home-box leftBottom"></div>
-    <div class="home-box rightBottom"></div>
-</section>
+  </section>
+
+  <section class="home__options" aria-labelledby="options-title">
+    <h2 id="options-title">Personaliza tu cartón</h2>
+    <div class="option-group"><span class="option-group__label">Filas</span><div class="segmented"><button type="button" [class.active]="selectedRows === 2" (click)="selectRows(2)" [attr.aria-pressed]="selectedRows === 2">2 filas</button><button type="button" [class.active]="selectedRows === 3" (click)="selectRows(3)" [attr.aria-pressed]="selectedRows === 3">3 filas</button></div></div>
+    <div class="option-group"><span class="option-group__label">Color</span><div class="colors"><button *ngFor="let color of colors" class="color-swatch" [class]="'color-swatch color-swatch--' + color" [class.active]="selectedColor === color" type="button" [attr.aria-label]="'Color ' + color" [attr.aria-pressed]="selectedColor === color" (click)="selectColor(color)"></button><button class="color-swatch color-swatch--random" [class.active]="selectedColor === 'random'" type="button" aria-label="Color aleatorio" [attr.aria-pressed]="selectedColor === 'random'" (click)="selectColor('random')">?</button></div></div>
+    <div class="option-group"><span class="option-group__label">Bolas</span><div class="segmented"><button type="button" [class.active]="maxBalls === 50" (click)="selectMaxBalls(50)" [attr.aria-pressed]="maxBalls === 50">1—50</button><button type="button" [class.active]="maxBalls === 90" (click)="selectMaxBalls(90)" [attr.aria-pressed]="maxBalls === 90">1—90</button></div></div>
+  </section>
+</main>

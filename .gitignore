@@ -4,6 +4,9 @@
 /dist
 /tmp
 /out-tsc
+/.angular
+/.cache
+*.tsbuildinfo
 # Only exists if Bazel was run
 /bazel-out
 

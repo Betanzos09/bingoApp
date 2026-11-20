@@ -1,28 +1,9 @@
 <app-header></app-header>
-<section class="bombo">
-    <div class="bombo-options">
-        <div class="bombo-options-ball" *ngIf="!shake">
-            <span class="bombo-options-ball-text">{{lastBall}}</span>
-        </div>
-        <div class="bombo-options-bombo" *ngIf="shake">
-            <figure class="bombo-options-bombo-figure">
-                <img class="bombo-options-bombo-figure-image pie" src="./assets/images/bombo1.svg" alt="bombo1">
-                <img class="bombo-options-bombo-figure-image bombo" src="./assets/images/bombo2.svg" alt="bombo2">
-                <img class="bombo-options-bombo-figure-image ruleta" src="./assets/images/bombo3.svg" alt="bombo3">
-            </figure>
-        </div>
-        <div class="bombo-options-buttons">
-            <button class="bombo-options-buttons-button" (click)="shake=true" *ngIf="!shake">Agitar</button>
-            <button class="bombo-options-buttons-button" (click)="nextBall()" *ngIf="shake">Parar</button>
-        </div>
-    </div>
-    <div class="bombo-screen">
-        <div class="bombo-screen-content">
-            <div class="bombo-screen-content-numbers">
-                <div class="bombo-screen-content-numbers-number" *ngFor="let number of numbers; let i = index" >
-                    <span class="bombo-screen-content-numbers-number-text" [class.called]="numbersCalled[i]">{{number}}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+<main class="draw-page">
+  <div class="draw-heading"><div><div class="eyebrow">SORTEO {{ numbers.length }}</div><h1>El bombo</h1></div><span class="progress">{{ calledCount }} / {{ numbers.length }}</span></div>
+  <section class="draw-stage" aria-live="polite">
+    <div class="draw-ball" [class.draw-ball--empty]="!lastBall"><div class="draw-ball__face"><span>{{ lastBall || '—' }}</span></div></div>
+    <div class="draw-controls"><p>{{ lastBall ? 'Ha salido el número' : 'Pulsa para sacar la primera bola' }}</p><button class="button button--primary" type="button" (click)="nextBall()" [disabled]="calledCount === numbers.length">{{ calledCount === numbers.length ? 'Sorteo completo' : 'Sacar número' }}</button><button class="button" type="button" (click)="reset()">Reiniciar sorteo</button></div>
+  </section>
+  <section class="led-panel" aria-label="Listado de números del sorteo"><div class="led-panel__header"><span>NÚMEROS EXTRAÍDOS</span><span>{{ calledCount }} / {{ numbers.length }}</span></div><div class="led-grid"><span *ngFor="let number of numbers" class="led-number" [class.led-number--called]="numbersCalled[number - 1]">{{ number | number:'2.0-0' }}</span></div></section>
+</main>
