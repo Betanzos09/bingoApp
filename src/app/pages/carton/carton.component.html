@@ -1,19 +1,17 @@
 <app-header></app-header>
-<section class="carton">
-    <div class="carton-content" [ngClass]="arrayColors[selectedColor]">
-        <div class="carton-content-title">
-            <span class="carton-content-title-text">LOTTO BOLA</span>
-        </div>
-        <div class="carton-content-body">
-            <div class="carton-content-body-numbers">
-                <div class="carton-content-body-numbers-number" [ngClass]="arrayColors[selectedColor]" *ngFor="let number of lotoNumbers; let i = index" (click)="callNumber(i)">
-                    <span class="carton-content-body-numbers-number-little topLeft">{{ number }}</span>
-                    <span class="carton-content-body-numbers-number-little topRight">{{ number }}</span>
-                    <span class="carton-content-body-numbers-number-little bottomLeft">{{ number }}</span>
-                    <span class="carton-content-body-numbers-number-little bottomRight">{{ number }}</span>
-                    <span class="carton-content-body-numbers-number-normal" [class.called]="lotoNumbersCalled[i]">{{ number }}</span>
-                </div>
-            </div>
-        </div>
+<aside class="orientation-notice" role="status" aria-label="Recomendación de orientación">
+  <span class="orientation-notice__icon" aria-hidden="true">↻</span>
+  <div><strong>Gira el dispositivo</strong><p>Desbloquea el giro automático y coloca el móvil o la tablet en horizontal para ver el cartón correctamente.</p></div>
+</aside>
+<main class="ticket-page">
+  <div class="page-heading"><div><div class="eyebrow">CARTÓN N.º {{ ticketNumber | number:'4.0-0' }}</div><h1>Tu cartón</h1></div><span class="progress">{{ markedCount }} / {{ numbers.length }}</span></div>
+  <p class="hint">Toca un número para marcarlo.</p>
+  <section class="ticket-shell" [class]="'ticket-shell ticket-shell--' + color" aria-label="Cartón de bingo">
+    <div class="line-message" [class.line-message--bingo]="lineMessage === 'BINGO'" *ngIf="lineMessageVisible" role="status">{{ lineMessage }}</div>
+    <div class="ticket-shell__label">CARTÓN N.º {{ ticketNumber | number:'4.0-0' }}</div>
+    <div class="ticket" [class.ticket--compact]="rows === 2" [style.gridTemplateRows]="'repeat(' + rows + ', 1fr)'">
+      <button class="ticket__cell" type="button" *ngFor="let cell of cells; let i = index" [class.ticket__cell--ball]="cell.ball" [class.ticket__cell--marked]="isCellMarked(i)" [class.ticket__cell--line]="isLineComplete(rowForCell(i))" [disabled]="cell.ball" [attr.aria-pressed]="isCellMarked(i)" (click)="toggleCell(i)"><span *ngIf="cell.ball" aria-hidden="true">◉</span><strong *ngIf="!cell.ball">{{ cell.number }}</strong></button>
     </div>
-</section>
+  </section>
+  <div class="page-actions"><button class="button button--primary" type="button" (click)="newTicket()">Nuevo cartón</button><button class="button" type="button" (click)="clear()">Limpiar marcas</button></div>
+</main>

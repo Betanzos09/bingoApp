@@ -1,24 +1,27 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { element } from 'protractor';
 import { Subscription, fromEvent } from 'rxjs';
+import { BingoService } from '../../shared/services/bingo.service';
 
 @Component({
   selector: 'app-bombo',
+  standalone: false,
   templateUrl: './bombo.component.html',
   styleUrls: ['./bombo.component.scss']
 })
 export class BomboComponent implements OnInit, OnDestroy {
 
   public numbers: Array<Number>;
+  public drawOrder: number[];
   public numbersCalled: Array<Boolean>;
   public lastBall: Number = 0;
   public shake: boolean = true;
   public subscriptor: Subscription;
 
 
-  constructor() { 
-    this.numbers = Array.from({length: 50}, (_, i) => i + 1);
-    this.numbersCalled = new Array(50).fill(false);
+  constructor(private bingo: BingoService) { 
+    this.drawOrder = bingo.createSequence();
+    this.numbers = Array.from({length: this.drawOrder.length}, (_, i) => i + 1);
+    this.numbersCalled = new Array(this.numbers.length).fill(false);
   }
 
   ngOnInit(): void {
@@ -42,15 +45,15 @@ export class BomboComponent implements OnInit, OnDestroy {
 
   public nextBall() {
     if(this.numbersCalled.includes(false)) {
-      let number = this.randomIntFromInterval(0,49);
-      while(this.numbersCalled[number] === true) {
-        number = this.randomIntFromInterval(0,49);
-      }
-      this.numbersCalled[number] = true;
-      this.lastBall = number +1;
+      const number = this.drawOrder.find(value => !this.numbersCalled[value - 1]);
+      this.numbersCalled[number - 1] = true;
+      this.lastBall = number;
     }
     this.shake = false;
   }
+
+  public get calledCount(): number { return this.numbersCalled.filter(Boolean).length; }
+  public reset(): void { this.drawOrder = this.bingo.createSequence(); this.numbersCalled = new Array(this.drawOrder.length).fill(false); this.lastBall = 0; this.shake = true; }
 
   private randomIntFromInterval(min: number, max: number) { 
     return Math.floor(Math.random() * (max - min + 1) + min);

@@ -43,7 +43,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -66,18 +65,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "bingoApp:build"
+            "buildTarget": "bingoApp:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "bingoApp:build:production"
+              "buildTarget": "bingoApp:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bingoApp:build"
+            "buildTarget": "bingoApp:build"
           }
         },
         "test": {
@@ -123,6 +122,9 @@
           }
         }
       }
-    }},
-  "defaultProject": "bingoApp"
+    }
+  },
+  "cli": {
+    "analytics": "b74c3ee9-2704-4fd5-9579-ad6d53d2e5f8"
+  }
 }
