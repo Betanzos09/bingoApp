@@ -1,84 +1,51 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, fromEvent } from 'rxjs';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Html5Qrcode } from 'html5-qrcode';
 import { BingoService } from '../../shared/services/bingo.service';
+import { ClaimResult, ClaimService, TicketClaim } from '../../shared/services/claim.service';
 
-@Component({
-  selector: 'app-bombo',
-  standalone: false,
-  templateUrl: './bombo.component.html',
-  styleUrls: ['./bombo.component.scss']
-})
-export class BomboComponent implements OnInit, OnDestroy {
+@Component({ selector: 'app-bombo', standalone: false, templateUrl: './bombo.component.html', styleUrls: ['./bombo.component.scss'] })
+export class BomboComponent implements OnDestroy {
+  @ViewChild('resetDialog') resetDialog: ElementRef<HTMLDialogElement>;
+  @ViewChild('scannerDialog') scannerDialog: ElementRef<HTMLDialogElement>;
+  numbers: number[];
+  drawOrder: number[];
+  numbersCalled: boolean[];
+  lastBall = 0;
+  result: ClaimResult | null = null;
+  scannedClaim: TicketClaim | null = null;
+  scannerError = '';
+  private scanner: Html5Qrcode | null = null;
 
-  public numbers: Array<Number>;
-  public drawOrder: number[];
-  public numbersCalled: Array<Boolean>;
-  public lastBall: Number = 0;
-  public shake: boolean = true;
-  public subscriptor: Subscription;
-
-
-  constructor(private bingo: BingoService) { 
-    this.drawOrder = bingo.createSequence();
-    this.numbers = Array.from({length: this.drawOrder.length}, (_, i) => i + 1);
-    this.numbersCalled = new Array(this.numbers.length).fill(false);
+  constructor(private bingo: BingoService, public claims: ClaimService, private changeDetector: ChangeDetectorRef) {
+    this.numbers = Array.from({ length: bingo.getMaxBalls() }, (_, index) => index + 1);
+    this.numbersCalled = this.numbers.map(number => claims.drawn.includes(number));
+    this.lastBall = claims.drawn[claims.drawn.length - 1] || 0;
+    this.drawOrder = bingo.createSequence().filter(number => !this.numbersCalled[number - 1]);
   }
 
-  ngOnInit(): void {
-    this.subscriptor =  fromEvent(window, 'resize')
-        .subscribe(res => {
-          let numbersClass = document.querySelector<HTMLElement>(".bombo-screen-content-numbers");
-          let heightNumber = numbersClass.offsetHeight;
-          let widthNumber = numbersClass.offsetWidth;
-          if(widthNumber < 890) {
-            this.resize();
-          }
-        });
-    setTimeout(()=>{
-      this.resize();
-    }, 100);
+  get calledCount(): number { return this.claims.drawn.length; }
+  get gameFinished(): boolean { return Boolean(this.claims.lineWinner && this.claims.bingoWinners.length); }
+  nextBall(): void { if (this.gameFinished) return; const number = this.drawOrder.shift(); if (number === undefined) return; this.numbersCalled[number - 1] = true; this.lastBall = number; this.claims.record(number); }
+  requestReset(): void { this.resetDialog.nativeElement.showModal(); }
+  closeOnBackdrop(event: MouseEvent, dialog: HTMLDialogElement): void { if (event.target === dialog) dialog.close(); }
+  reset(): void { this.resetDialog.nativeElement.close(); this.claims.reset(); this.drawOrder = this.bingo.createSequence(); this.numbersCalled = this.numbers.map(() => false); this.lastBall = 0; this.result = null; this.scannedClaim = null; }
+
+  async openScanner(): Promise<void> {
+    this.scannerError = ''; this.result = null; this.scannedClaim = null;
+    this.scannerDialog.nativeElement.showModal();
+    this.scanner = new Html5Qrcode('bingo-qr-reader');
+    try {
+      await this.scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 240 }, async raw => {
+        await this.stopScanner();
+        const claim = this.claims.parse(raw, this.numbers.length);
+        if (!claim) this.result = { status: 'invalid', message: 'QR inválido o cartón de otra modalidad.' };
+        else { this.scannedClaim = claim; this.result = this.claims.inspect(claim); if (this.result.status === 'line' || this.result.status === 'bingo') this.result = this.claims.award(claim, this.result.status); }
+        this.changeDetector.detectChanges();
+      }, () => {});
+    } catch { this.scannerError = 'No se pudo abrir la cámara. Revisa los permisos y usa HTTPS o localhost.'; this.changeDetector.detectChanges(); }
   }
-
-  ngOnDestroy():void {
-    this.subscriptor.unsubscribe();
-  }
-
-  public nextBall() {
-    if(this.numbersCalled.includes(false)) {
-      const number = this.drawOrder.find(value => !this.numbersCalled[value - 1]);
-      this.numbersCalled[number - 1] = true;
-      this.lastBall = number;
-    }
-    this.shake = false;
-  }
-
-  public get calledCount(): number { return this.numbersCalled.filter(Boolean).length; }
-  public reset(): void { this.drawOrder = this.bingo.createSequence(); this.numbersCalled = new Array(this.drawOrder.length).fill(false); this.lastBall = 0; this.shake = true; }
-
-  private randomIntFromInterval(min: number, max: number) { 
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  private resize() {
-    let numbersClass = document.querySelector<HTMLElement>(".bombo-screen-content-numbers");
-    let heightNumber = numbersClass.offsetHeight;
-    let widthNumber = numbersClass.offsetWidth;
-    let value = Math.trunc(Math.sqrt((heightNumber * widthNumber)/50)) - 12;
-    let numberClass = document.getElementsByClassName("bombo-screen-content-numbers-number");
-    for (let index = 0; index < numberClass.length; index++) {
-      let element = numberClass[index] as HTMLElement;
-      element.style.height = value + "px";
-      element.style.width = value + "px";
-      element.style.opacity = "1";
-    }
-    let numberFontClass = document.getElementsByClassName("bombo-screen-content-numbers-number-text");
-    for (let index = 0; index < numberFontClass.length; index++) {
-      let element = numberFontClass[index] as HTMLElement;
-      element.style.fontSize = value/2 + "px";
-      element.style.height = value/1.5 + "px";
-      element.style.width = value/1.5 + "px";
-
-    }
-  }
-
+  async closeScanner(): Promise<void> { await this.stopScanner(); if (this.scannerDialog.nativeElement.open) this.scannerDialog.nativeElement.close(); }
+  private async stopScanner(): Promise<void> { if (!this.scanner) return; const scanner = this.scanner; this.scanner = null; if (scanner.isScanning) await scanner.stop(); scanner.clear(); }
+  award(type: 'line' | 'bingo'): void { if (this.scannedClaim) this.result = this.claims.award(this.scannedClaim, type); }
+  ngOnDestroy(): void { void this.stopScanner(); }
 }

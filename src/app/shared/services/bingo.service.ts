@@ -5,8 +5,9 @@ export class BingoService {
   private maxBalls = 50;
   private rows = 3;
   private color = 'random';
+  constructor() { const saved = localStorage.getItem('nuevo-bingo-max-balls'); if (saved === '90') this.maxBalls = 90; }
   getMaxBalls(): number { return this.maxBalls; }
-  setMaxBalls(maxBalls: number): void { this.maxBalls = maxBalls; }
+  setMaxBalls(maxBalls: number): void { if (maxBalls !== 50 && maxBalls !== 90) return; this.maxBalls = maxBalls; localStorage.setItem('nuevo-bingo-max-balls', String(maxBalls)); }
   getRows(): number { return this.rows; }
   setRows(rows: number): void { this.rows = rows; }
   getColor(): string { return this.color; }
